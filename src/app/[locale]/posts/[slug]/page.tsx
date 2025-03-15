@@ -4,9 +4,11 @@ import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import ReactMarkdown from 'react-markdown';
-import { ArrowUp, ChevronLeft } from "lucide-react";
+import MDXContent from '@/components/MDXContent';
+import { ChevronLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { PostDetailSkeleton } from '@/components/ui/skeleton';
+import { LazyLoad } from '@/components/LazyLoad';
 
 interface Post {
   id: number;
@@ -16,6 +18,7 @@ interface Post {
   content: string;
   author: string;
   tags: string[];
+  isMdx: boolean;
 }
 
 interface TableOfContents {
@@ -24,23 +27,23 @@ interface TableOfContents {
   level: number;
 }
 
-export default function PostPage() {
+function PostContent() {
   const t = useTranslations("common");
   const params = useParams();
   const { locale, slug } = params as { locale: string; slug: string };
-  
+
   const [post, setPost] = useState<Post | null>(null);
   const [prevPost, setPrevPost] = useState<Post | null>(null);
   const [nextPost, setNextPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [toc, setToc] = useState<TableOfContents[]>([]);
   const [isNavSticky, setIsNavSticky] = useState(false);
-  
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const contentRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
-  const mainNavbarHeight = 75; 
+  const mainNavbarHeight = 75;
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -111,13 +114,49 @@ export default function PostPage() {
     
   useEffect(() => {
     const handleScroll = () => {
-      // Calculate scroll progress
-      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
-      setScrollProgress(progress);
+      // Calculate scroll progress based on article content
+      if (contentRef.current) {
+        // Get the article element's position and dimensions
+        const articleRect = contentRef.current.getBoundingClientRect();
+        const articleTop = window.scrollY + articleRect.top;
+        const articleBottom = articleTop + articleRect.height;
 
-      // Show scroll to top button after scrolling down 300px
-      setShowScrollTop(window.scrollY > 300);
+        // Get the viewport height
+        const viewportHeight = window.innerHeight;
+
+        // Current scroll position
+        const scrollPosition = window.scrollY;
+
+        // Calculate the visible portion of the article
+        // If we haven't reached the article yet
+        if (scrollPosition < articleTop) {
+          setScrollProgress(0);
+        }
+        // If we've scrolled past the article
+        else if (scrollPosition + viewportHeight >= articleBottom) {
+          setScrollProgress(100);
+        }
+        // We're somewhere in the article
+        else {
+          // Calculate how much of the article we've scrolled through
+          const totalScrollableDistance = articleBottom - articleTop - viewportHeight;
+          const scrolledDistance = scrollPosition - articleTop;
+
+          // Calculate progress as a percentage (0 to 100)
+          const progress = Math.max(0, Math.min(100, (scrolledDistance / totalScrollableDistance) * 100));
+          setScrollProgress(progress);
+        }
+      } else {
+        // Fallback to original calculation if contentRef is not available
+        const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(progress);
+      }
+
+      // Check if scrolled more than 2%
+      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrollPercentage = (window.scrollY / totalHeight) * 100;
+      setIsScrolled(scrollPercentage >= 2);
 
       // Smooth secondary navbar positioning
       if (navRef.current) {
@@ -138,34 +177,21 @@ export default function PostPage() {
     };
 
     // Initial call to set correct position on load
-    handleScroll();
+    // Use a small timeout to ensure the content is rendered
+    setTimeout(handleScroll, 100);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [post]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  if (!loading && !post) {
-    notFound();
-  }
+  // Scroll to top function removed - now handled globally
 
   if (loading) {
-    return (
-      <div className="container max-w-3xl py-12">
-        <div className="animate-pulse">
-          <div className="h-8 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-1/4 mb-8"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <PostDetailSkeleton />;
+  }
+
+  if (!post) {
+    notFound();
   }
 
   return (
@@ -173,31 +199,39 @@ export default function PostPage() {
       {/* Navigation bar */}
       <div
         ref={navRef}
-        className={`w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 transition-all ${
+        className={`w-full transition-all duration-300 border-b ${
+          isScrolled
+            ? 'bg-zinc-100/90 dark:bg-zinc-900/90 backdrop-blur-sm border-zinc-300/80 dark:border-zinc-700/80'
+            : 'bg-zinc-100/30 dark:bg-zinc-900/30 border-zinc-300/30 dark:border-zinc-700/30'
+        } ${
           isNavSticky ? 'shadow-sm' : ''
         }`}
         >
         <div className="container px-4 relative py-3">
           {/* Back button - absolute positioning for proper centering */}
-          <Link 
-            href={`/${locale}/posts`}
-            className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-sm md:text-base"
+          <Link
+            href={`/posts`}
+            className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-sm md:text-base hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden md:inline">Back to Posts</span>
             <span className="md:hidden">Back</span>
           </Link>
-          
+
           {/* URL slug display - centered */}
-          <div className="bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full text-xs md:text-sm mx-auto w-fit">
+          <div className={`px-3 py-1 rounded-full text-xs md:text-sm mx-auto w-fit transition-all duration-300 ${
+            isScrolled
+              ? 'bg-zinc-200/90 dark:bg-zinc-800/90'
+              : 'bg-zinc-200/60 dark:bg-zinc-800/60'
+          }`}>
             <span className="opacity-60">posts/</span>
             <span>{slug}</span>
           </div>
         </div>
-        
+
         {/* Progress bar */}
         <div className="w-full h-0.5 bg-transparent">
-            <div 
+            <div
             className="h-full bg-black dark:bg-white transition-all duration-150 ease-out"
             style={{ width: `${scrollProgress}%`, opacity: scrollProgress > 0 ? 1 : 0 }}
             />
@@ -208,16 +242,7 @@ export default function PostPage() {
         <div style={{ height: '30px', marginTop: '10px' }}></div>
 
 
-      {/* Scroll to top button */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-2 bg-zinc-100 dark:bg-zinc-800 rounded-full shadow-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
-      )}
+      {/* Scroll to top button removed - now handled globally */}
       
       <div className="container py-8 md:py-12 lg:pl-16">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -231,11 +256,11 @@ export default function PostPage() {
                 <span>{post?.author}</span>
               </div>
               {post?.tags && post.tags.length > 0 && (
-                <div className="flex justify-center flex-wrap gap-2">
+                <div className="flex justify-center flex-wrap gap-1.5 mt-1.5 mt-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-md text-sm"
+                      className="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-md text-sm text-zinc-700 dark:text-zinc-300 text-zinc-700 dark:text-zinc-300"
                     >
                       {tag}
                     </span>
@@ -244,8 +269,8 @@ export default function PostPage() {
               )}
             </header>
             
-            <div 
-              ref={contentRef} 
+            <div
+              ref={contentRef}
               className="prose prose-zinc dark:prose-invert max-w-none mx-auto
                 prose-headings:font-bold prose-headings:tracking-tight
                 prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
@@ -261,7 +286,9 @@ export default function PostPage() {
                 prose-th:border prose-th:border-zinc-300 dark:prose-th:border-zinc-700 prose-th:bg-zinc-100 dark:prose-th:bg-zinc-800 prose-th:p-2 prose-th:text-left
                 prose-td:border prose-td:border-zinc-300 dark:prose-td:border-zinc-700 prose-td:p-2"
             >
-              <ReactMarkdown>{post?.content || ""}</ReactMarkdown>
+              <MDXContent
+                content={post?.content || ""}
+              />
             </div>
           </article>
           
@@ -274,10 +301,26 @@ export default function PostPage() {
                     <a
                     key={item.id}
                     href={`#${item.id}`}
-                    className={`block hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors ${
+                    className={`block text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
                         item.level === 1 ? 'font-semibold' : ''
                     }`}
                     style={{ paddingLeft: `${(item.level - 1) * 0.75}rem` }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.getElementById(item.id);
+                      if (element) {
+                        // Get the navbar height - account for both main and secondary navbars
+                        const mainNavHeight = mainNavbarHeight;
+                        const secondaryNavHeight = navRef.current ? navRef.current.offsetHeight : 0;
+                        const totalOffset = mainNavHeight + secondaryNavHeight + 20; // Adding extra padding
+
+                        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                        window.scrollTo({
+                          top: elementPosition - totalOffset,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
                     >
                     {item.text}
                     </a>
@@ -295,8 +338,8 @@ export default function PostPage() {
               {prevPost && (
                 <>
                   <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Previous post:</p>
-                  <Link 
-                    href={`/${locale}/posts/${prevPost.slug}`} 
+                  <Link
+                    href={`/posts/${prevPost.slug}`}
                     className="text-base sm:text-lg font-semibold hover:underline break-words"
                   >
                     {prevPost.title}
@@ -309,8 +352,8 @@ export default function PostPage() {
               {nextPost && (
                 <>
                   <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Next post:</p>
-                  <Link 
-                    href={`/${locale}/posts/${nextPost.slug}`} 
+                  <Link
+                    href={`/posts/${nextPost.slug}`}
                     className="text-base sm:text-lg font-semibold hover:underline break-words inline-block"
                   >
                     {nextPost.title}
@@ -323,4 +366,8 @@ export default function PostPage() {
       </div>
     </>
   );
+}
+
+export default function PostPage() {
+  return <PostContent />;
 }

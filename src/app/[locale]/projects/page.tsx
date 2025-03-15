@@ -1,9 +1,12 @@
-import { useTranslations } from "next-intl"
-import { Link } from "@/i18n/navigation"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Github, Globe } from "lucide-react"
+"use client";
+
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Github, Globe } from "lucide-react";
+import { ProjectsPageSkeleton } from "@/components/ui/skeleton";
+import { LazyLoad } from "@/components/LazyLoad";
 
 // Sample project data
 const PROJECTS = [
@@ -48,8 +51,8 @@ const PROJECTS = [
   },
 ]
 
-export default function Projects() {
-  const t = useTranslations("common")
+function ProjectsContent() {
+  const t = useTranslations("common");
 
   return (
     <section className="py-12 md:py-20">
@@ -122,5 +125,10 @@ export default function Projects() {
         </div>
       </div>
     </section>
-  )
+  );
+}
+
+export default function Projects() {
+  // Projects page doesn't need to fetch data, so we can render it directly
+  return <ProjectsContent />;
 }

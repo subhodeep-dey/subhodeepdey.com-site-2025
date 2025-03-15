@@ -1,0 +1,75 @@
+---
+title: "Interactive Markdown Demo: Using Custom Components"
+date: "2025-04-02"
+author: "Subhodeep Dey"
+tags: ["Markdown", "React", "Interactive", "Demo"]
+---
+
+# Interactive Markdown Demo
+
+This post demonstrates how to use custom React components in your Markdown content. Enhanced Markdown allows you to combine the simplicity of Markdown with the power of React components.
+
+## Interactive Counter Component
+
+Below is an interactive counter component that maintains state:
+
+{/* <Counter /> */}
+
+Try clicking the buttons above to increase or decrease the counter. This component is defined in `src/components/mdx/Counter.tsx`.
+
+## Callout Component
+
+You can also use custom components to create styled callouts for important information:
+
+{/* <Callout type="info" title="Information">
+  This is an informational callout that can be used to highlight important details.
+</Callout> */}
+
+{/* <Callout type="warning" title="Warning">
+  Be careful! This warning callout draws attention to important precautions.
+</Callout> */}
+
+{/* <Callout type="error" title="Error">
+  Something went wrong! Use this error callout to highlight critical issues.
+</Callout> */}
+
+{/* <Callout type="success" title="Success">
+  Well done! This success callout celebrates achievements or confirms successful operations.
+</Callout> */}
+
+## Code Blocks
+
+Markdown also supports code blocks with syntax highlighting:
+
+```jsx
+function Welcome({ name }) {
+  return <h1>Hello, {name}!</h1>;
+}
+
+export default function App() {
+  return (
+    <div>
+      <Welcome name="Sara" />
+      <Welcome name="Cahal" />
+      <Welcome name="Edite" />
+    </div>
+  );
+}
+```
+
+## Tables
+
+You can create tables in Markdown:
+
+| Framework | Learning Curve | Performance | Community Support |
+|-----------|----------------|-------------|-------------------|
+| React     | Moderate       | High        | Excellent         |
+| Vue       | Low            | High        | Good              |
+| Angular   | High           | Good        | Excellent         |
+| Svelte    | Low            | Excellent   | Growing           |
+
+## Conclusion
+
+Enhanced Markdown provides a powerful way to create rich blog posts. By using custom components and styling, you can create engaging content for your readers.
+
+Try creating your own custom components to enhance your Markdown content!

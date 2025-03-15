@@ -2,9 +2,13 @@ import '@/app/globals.css';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { NavbarSkeleton } from '@/components/ui/skeleton';
+import { LazyLoad } from '@/components/LazyLoad';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import { Toaster } from '@/components/ui/sonner';
+import MoreOnThisSite from '@/components/MoreOnThisSite';
 import { NextIntlClientProvider } from 'next-intl';
 import { hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
@@ -53,13 +57,15 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider defaultTheme="dark" storageKey="Subhodeep-theme">
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-grow">{children}</main>
+              <MoreOnThisSite />
               <Footer />
+              <ScrollToTop />
               <Toaster position="bottom-right" />
             </div>
           </ThemeProvider>

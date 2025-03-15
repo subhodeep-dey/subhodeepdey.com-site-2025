@@ -25,7 +25,9 @@
       "home": "Home",
       "work": "Work",
       "projects": "Projects",
+      "about": "About",
       "posts": "Posts",
+      "more": "More...",
       "sayHi": "Say Hi"
     },
     "contactForm": {
@@ -43,14 +45,20 @@
     },
     "languageSwitch": {
       "en": "English",
-      "ko": "Korean",
-      "ja": "Japanese"
+      "ko": "한국어",
+      "ja": "日本語"
     },
     "posts": {
       "title": "Blog Posts",
       "intro": "Articles, tutorials, snippets, and everything else I've written on technology, development, and more.",
       "search": "Search posts...",
-      "noResults": "No posts found. Try a different search term."
+      "noResults": "No posts found. Try a different search term.",
+      "pagination": {
+        "prev": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of"
+      }
     },
     "projects": {
       "title": "Projects",

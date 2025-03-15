@@ -1,10 +1,24 @@
+"use client";
+
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 import { Link } from "@/i18n/navigation"
-import { Github, Linkedin, Twitter, Youtube } from "lucide-react"
+import { useLocale } from "next-intl";
+import { Github, Linkedin, Twitter, Youtube, Download } from "lucide-react"
+import { HomepageSkeleton } from "@/components/ui/skeleton"
+import { LazyLoad } from "@/components/LazyLoad"
+import { NewsletterForm } from "@/components/NewsletterForm"
 
-export default function Home() {
+function HomeContent() {
   const t = useTranslations("common")
+
+  // Get social URLs from environment variables
+  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com"
+  const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com"
+  const twitterUrl = process.env.NEXT_PUBLIC_TWITTER_URL || "https://twitter.com"
+  const youtubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com"
+  const locale = useLocale();
+  const resumeUrl = `/downloads/${locale}/subhodeep_dey_resume_${locale === 'en' ? 'english' : locale === 'ko' ? 'korean' : 'japanese'}.pdf`;
 
   return (
     <section className="py-12 md:py-20">
@@ -64,7 +78,16 @@ export default function Home() {
 
             <div className="mt-8 flex gap-4 flex-wrap justify-center md:justify-start">
               <a
-                href="https://github.com"
+                href={resumeUrl}
+                download
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-800 dark:bg-zinc-700 text-white rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors mb-6 md:mb-0"
+              >
+                <Download className="h-4 w-4" />
+                <span>Resume</span>
+              </a>
+
+              <a
+                href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-4 py-2 rounded-full transition-colors"
@@ -73,7 +96,7 @@ export default function Home() {
                 <span>GitHub</span>
               </a>
               <a
-                href="https://linkedin.com"
+                href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-4 py-2 rounded-full transition-colors"
@@ -82,7 +105,7 @@ export default function Home() {
                 <span>LinkedIn</span>
               </a>
               <a
-                href="https://twitter.com"
+                href={twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-4 py-2 rounded-full transition-colors"
@@ -91,7 +114,7 @@ export default function Home() {
                 <span>Twitter</span>
               </a>
               <a
-                href="https://youtube.com"
+                href={youtubeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-4 py-2 rounded-full transition-colors"
@@ -115,7 +138,17 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Newsletter Section */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <NewsletterForm />
+        </div>
       </div>
     </section>
   )
+}
+
+export default function Home() {
+  // Home page doesn't need to fetch data, so we can render it directly
+  return <HomeContent />;
 }

@@ -10,6 +10,8 @@ interface Post {
   content: string;
   author: string;
   tags: string[];
+  isMdx?: boolean;
+  originalFilename?: string;
 }
 
 interface Tags {
@@ -18,19 +20,25 @@ interface Tags {
 
 export function getPosts(locale: string): Post[] {
   const postsDirectory = path.join(process.cwd(), 'public', 'posts', locale);
-  const filenames = fs.readdirSync(postsDirectory).filter(file => file !== 'tags.md');
+  const filenames = fs.readdirSync(postsDirectory)
+    .filter(file => file !== 'tags.md' && (file.endsWith('.md') || file.endsWith('.mdx')));
+
   return filenames.map((filename, index) => {
     const filePath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
+    const isMdx = filename.endsWith('.mdx');
+
     return {
       id: index + 1,
       title: data.title,
       date: data.date,
-      slug: filename.replace(/\.md$/, ''),
+      slug: filename.replace(/\.(md|mdx)$/, ''),
       content,
       author: data.author,
       tags: data.tags,
+      isMdx,
+      originalFilename: filename,
     };
   });
 }

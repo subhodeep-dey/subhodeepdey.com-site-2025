@@ -33,6 +33,22 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Shadow variables */
+    --shadow-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.1),
+                 0px 4px 6px -2px rgba(16, 24, 40, 0.05);
+    --shadow-xs: 0px 1px 2px rgba(16, 24, 40, 0.05);
+    --drop-shadow: drop-shadow(37px 73px 32px rgba(0, 0, 0, 0.02))
+                   drop-shadow(21px 41px 27px rgba(0, 0, 0, 0.06))
+                   drop-shadow(9px 18px 20px rgba(0, 0, 0, 0.1))
+                   drop-shadow(2px 5px 11px rgba(0, 0, 0, 0.12))
+                   drop-shadow(0px 0px 0px rgba(0, 0, 0, 0.12));
+
+    /* Fluid typography variables */
+    --fluid-min-width: 320;
+    --fluid-max-width: 1140;
+    --fluid-screen: 100vw;
+    --fluid-bp: calc((var(--fluid-screen) - var(--fluid-min-width) / 16 * 1rem) / (var(--fluid-max-width) - var(--fluid-min-width)));
   }
 
   .dark {
@@ -70,18 +86,143 @@
   * {
     @apply border-border;
   }
+
+  /* Text selection styling */
+  ::selection {
+    @apply bg-zinc-200 text-black;
+  }
+
+  .dark ::selection {
+    @apply bg-zinc-700 text-white;
+  }
+
+  html {
+    height: 100%;
+    font-size: calc(1rem + 0.25vw);
+  }
+
   body {
     @apply bg-background text-foreground;
+    margin: 0;
+    min-height: 100%;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    letter-spacing: -0.01em;
+    line-height: calc(0.25rem + 1em);
+    display: flex;
+    flex-direction: column;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  /* List styling */
+  ol,
+  ul {
+    padding: 0 1.1rem 1rem;
+    margin: 2rem 0;
+  }
+
+  .article ol,
+  .article ul {
+    margin: 0.5rem 0;
+  }
+
+  ul:where([role=list]) {
+    list-style: none;
+  }
+
+  ul li {
+    margin-block-end: 0.6rem;
+  }
+
+  ul li::marker {
+    font-weight: bold;
+  }
+
+  ol {
+    list-style-type: decimal-leading-zero;
+    margin-inline-start: 0.5em;
+  }
+
+  ol li::marker {
+    font-weight: 700;
+    font-size: 1em;
+  }
+
+  /* Code styling */
+  code, pre {
+    font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    tab-size: 4;
+    hyphens: none;
+  }
+
+  pre {
+    padding: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+    border-radius: 0.3em;
+  }
+
+  /* Citation styling */
+  cite {
+    font-weight: 400;
+    font-size: 0.85em;
+  }
+
+  /* Current page link styling */
+  a[aria-current=page] {
+    font-weight: bold;
+  }
+}
+
+/* Fluid spacing variables */
+:root {
+  --fc-3xs-min: 4;
+  --fc-3xs-max: 5;
+  --fc-2xs-min: 8;
+  --fc-2xs-max: 10;
+  --fc-xs-min: 12;
+  --fc-xs-max: 15;
+  --fc-s-min: 16;
+  --fc-s-max: 20;
+  --fc-m-min: 24;
+  --fc-m-max: 30;
+  --fc-l-min: 32;
+  --fc-l-max: 40;
+  --fc-xl-min: 48;
+  --fc-xl-max: 60;
+  --fc-2xl-min: 64;
+  --fc-2xl-max: 80;
+  --fc-3xl-min: 96;
+  --fc-3xl-max: 120;
+
+  /* T-shirt sizes */
+  --space-3xs: calc(((var(--fc-3xs-min) / 16) * 1rem) + (var(--fc-3xs-max) - var(--fc-3xs-min)) * var(--fluid-bp));
+  --space-2xs: calc(((var(--fc-2xs-min) / 16) * 1rem) + (var(--fc-2xs-max) - var(--fc-2xs-min)) * var(--fluid-bp));
+  --space-xs: calc(((var(--fc-xs-min) / 16) * 1rem) + (var(--fc-xs-max) - var(--fc-xs-min)) * var(--fluid-bp));
+  --space-s: calc(((var(--fc-s-min) / 16) * 1rem) + (var(--fc-s-max) - var(--fc-s-min)) * var(--fluid-bp));
+  --space-m: calc(((var(--fc-m-min) / 16) * 1rem) + (var(--fc-m-max) - var(--fc-m-min)) * var(--fluid-bp));
+  --space-l: calc(((var(--fc-l-min) / 16) * 1rem) + (var(--fc-l-max) - var(--fc-l-min)) * var(--fluid-bp));
+  --space-xl: calc(((var(--fc-xl-min) / 16) * 1rem) + (var(--fc-xl-max) - var(--fc-xl-min)) * var(--fluid-bp));
+  --space-2xl: calc(((var(--fc-2xl-min) / 16) * 1rem) + (var(--fc-2xl-max) - var(--fc-2xl-min)) * var(--fluid-bp));
+  --space-3xl: calc(((var(--fc-3xl-min) / 16) * 1rem) + (var(--fc-3xl-max) - var(--fc-3xl-min)) * var(--fluid-bp));
+}
+
+@media screen and (min-width: 1140px) {
+  :root {
+    --fluid-screen: calc(var(--fluid-max-width) * 1px);
   }
 }
 
 /* Custom styles for the website */
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
-}
-
 .dark body {
   @apply bg-zinc-900 text-zinc-100;
 }
@@ -96,14 +237,24 @@ body {
 
 .container {
   @apply px-4 mx-auto max-w-7xl;
+  width: 90vw;
+  margin-inline: auto;
+}
+
+.content-container {
+  width: 90vw;
+  margin-inline: auto;
 }
 
 .bio-text {
-  @apply text-lg leading-relaxed;
+  @apply text-lg;
+  letter-spacing: -0.01em;
+  line-height: calc(0.25rem + 1em);
 }
 
 .section-title {
   @apply text-2xl font-bold mb-4;
+  letter-spacing: -0.01em;
 }
 
 .card {
@@ -112,6 +263,14 @@ body {
 
 .dark .card {
   @apply bg-zinc-800 border-zinc-700;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {

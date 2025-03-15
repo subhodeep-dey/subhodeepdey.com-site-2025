@@ -61,13 +61,13 @@ export function PostTags({ locale, onTagSelect }: PostTagsProps) {
   return (
     <div className="post-tags">
       <h3 className="font-bold mb-3">Tags</h3>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {tags.map(tag => (
           <span
             key={tag}
-            className={`inline-block cursor-pointer text-sm px-3 py-1 rounded-full transition-colors ${
-              selectedTags.includes(tag) 
-                ? "bg-sky-500 text-white" 
+            className={`inline-block cursor-pointer text-sm px-2.5 py-1 rounded-md transition-colors ${
+              selectedTags.includes(tag)
+                ? "bg-sky-500 text-white"
                 : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600"
             }`}
             onClick={() => handleTagClick(tag)}

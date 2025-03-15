@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { useTranslations, useLocale } from "next-intl"
 import { Link } from "@/i18n/navigation"
@@ -23,6 +23,37 @@ export function Navbar() {
     return (pathname === path || pathname === `${path}/`)
       ? "font-bold"
       : ""
+  }
+
+  const scrollToMoreSection = (e: React.MouseEvent) => {
+    e.preventDefault()
+
+    // Close mobile menu first if it's open
+    if (isMenuOpen) {
+      setIsMenuOpen(false)
+    }
+
+    // Use setTimeout to ensure the menu has time to close and recalculate positions
+    setTimeout(() => {
+      const moreSection = document.getElementById('more-on-this-site')
+      if (moreSection) {
+        // Get the section's position
+        const moreSectionRect = moreSection.getBoundingClientRect()
+        const offsetPosition = moreSectionRect.top + window.scrollY
+
+        // Calculate header height - use different values for mobile and desktop
+        const headerHeight = window.innerWidth < 768 ? 60 : 75 // Adjust these values as needed
+
+        // Add extra padding for mobile to ensure the heading is clearly visible
+        const mobilePadding = window.innerWidth < 768 ? 20 : 0
+
+        // Scroll to the section with offset for the header
+        window.scrollTo({
+          top: offsetPosition - headerHeight - mobilePadding,
+          behavior: 'smooth'
+        })
+      }
+    }, isMenuOpen ? 300 : 0) // Add delay only if menu was open
   }
 
   return (
@@ -65,11 +96,24 @@ export function Navbar() {
               {t("navigation.projects")}
             </Link>
             <Link
+              href="/about"
+              className={`nav-link ${isActive("/about")}`}
+            >
+              {t("navigation.about")}
+            </Link>
+            <Link
               href="/posts"
               className={`nav-link ${isActive("/posts")}`}
             >
               {t("navigation.posts")}
             </Link>
+            <a
+              href="#more-on-this-site"
+              className="nav-link cursor-pointer"
+              onClick={scrollToMoreSection}
+            >
+              {t("navigation.more")}
+            </a>
           </nav>
         </div>
 
@@ -111,12 +155,26 @@ export function Navbar() {
               {t("navigation.projects")}
             </Link>
             <Link
+              href="/about"
+              className={`nav-link ${isActive("/about")} text-lg`}
+              onClick={toggleMenu}
+            >
+              {t("navigation.about")}
+            </Link>
+            <Link
               href="/posts"
               className={`nav-link ${isActive("/posts")} text-lg`}
               onClick={toggleMenu}
             >
               {t("navigation.posts")}
             </Link>
+            <a
+              href="#more-on-this-site"
+              className="nav-link text-lg cursor-pointer"
+              onClick={scrollToMoreSection}
+            >
+              {t("navigation.more")}
+            </a>
             <Link
               href="/contact"
               className="rounded-full px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 transition-opacity w-fit mt-2"

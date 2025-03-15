@@ -11,6 +11,8 @@ interface Post {
   content: string;
   author: string;
   tags: string[];
+  isMdx?: boolean;
+  originalFilename?: string;
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -22,36 +24,40 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const postsDirectory = path.join(process.cwd(), 'public', 'posts', locale);
-    
+
     // Make sure the directory exists
     if (!fs.existsSync(postsDirectory)) {
       return res.status(404).json({ error: `No posts found for locale: ${locale}` });
     }
-    
+
     // Get all file names, filter out directories and tags.md
     const filenames = fs.readdirSync(postsDirectory)
       .filter(filename => {
         const filePath = path.join(postsDirectory, filename);
-        return fs.statSync(filePath).isFile() && 
-               filename !== 'tags.md' && 
-               filename.endsWith('.md');
+        return fs.statSync(filePath).isFile() &&
+               filename !== 'tags.md' &&
+               (filename.endsWith('.md') || filename.endsWith('.mdx'));
       });
-    
+
     const posts: Post[] = filenames.map((filename, index) => {
       const filePath = path.join(postsDirectory, filename);
       const fileContents = fs.readFileSync(filePath, 'utf8');
       const { data, content } = matter(fileContents);
+      const isMdx = filename.endsWith('.mdx');
+
       return {
         id: index + 1,
         title: data.title,
         date: data.date,
-        slug: filename.replace(/\.md$/, ''),
+        slug: filename.replace(/\.(md|mdx)$/, ''),
         content,
         author: data.author || 'Unknown',
         tags: data.tags || [],
+        isMdx,
+        originalFilename: filename,
       };
     });
-    
+
     // Get tags
     let tags: string[] = [];
     try {
@@ -75,7 +81,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     } catch (error) {
       console.error("Error reading tags:", error);
     }
-    
+
     res.status(200).json({ posts, tags });
   } catch (error) {
     console.error("API error:", error);

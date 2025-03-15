@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { WorkPageSkeleton } from "@/components/ui/skeleton"
+import { LazyLoad } from "@/components/LazyLoad"
 
 // Sample work experience data
 const WORK_EXPERIENCE = [
@@ -81,7 +83,7 @@ const WORK_EXPERIENCE = [
   }
 ]
 
-export default function Work() {
+function WorkContent() {
   const t = useTranslations("common")
   const [expandedJobs, setExpandedJobs] = useState<number[]>([])
 
@@ -164,11 +166,17 @@ export default function Work() {
 
                 {expandedJobs.includes(job.id) && (
                   <div className="mt-4 border-t pt-4 border-zinc-200 dark:border-zinc-800">
-                    <ul className="space-y-2 list-disc list-inside text-zinc-600 dark:text-zinc-400">
+                    <div className="space-y-3">
                       {job.contributions.map((contribution, index) => (
-                        <li key={index}>{contribution}</li>
+                        <div
+                          key={index}
+                          className="p-3 rounded-lg bg-gradient-to-r from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/70 text-zinc-700 dark:text-zinc-300 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 flex items-center"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-3 flex-shrink-0"></div>
+                          <span>{contribution}</span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -178,4 +186,9 @@ export default function Work() {
       </div>
     </section>
   )
+}
+
+export default function Work() {
+  // Work page doesn't need to fetch data, so we can render it directly
+  return <WorkContent />;
 }
