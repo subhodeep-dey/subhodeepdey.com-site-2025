@@ -1,0 +1,68 @@
+{
+  "common": {
+    "home": {
+      "title": "Subhodeep Dey",
+      "subtitle": "Full stack developer and an engineering leader. Currently working on roadmap.sh.",
+      "formTitle": "Get in Touch",
+      "bio1": "I am a full-stack developer with a passion for building well-crafted products",
+      "bio2": "I believe in putting users first, prioritizing simplicity and functionality",
+      "bio3": "I've been programming for over 15 years",
+      "bio4": "I've seen trends come and go",
+      "bio5": "I've tried many languages and frameworks",
+      "bio6": "I value clean code",
+      "bio7": "I believe in robust systems that are maintainable long-term",
+      "bio8": "I thrive in high-growth, high-impact environments",
+      "bio9": "I enjoy collaborative teams where everyone takes ownership",
+      "bio10": "I am passionate about developer tools and growth",
+      "bio11": "I love open-source",
+      "bio12": "I enjoy sharing knowledge through writing and talks",
+      "bio13": "Check out my",
+      "bio14": "YouTube channel",
+      "bio15": "for videos on developers and tech",
+      "contactText": "Want to work together? Feel free to"
+    },
+    "navigation": {
+      "home": "Home",
+      "work": "Work",
+      "projects": "Projects",
+      "posts": "Posts",
+      "sayHi": "Say Hi"
+    },
+    "contactForm": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send Message",
+      "success": "Message sent successfully!",
+      "error": "Failed to send message. Please try again."
+    },
+    "themeSwitch": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languageSwitch": {
+      "en": "English",
+      "ko": "Korean",
+      "ja": "Japanese"
+    },
+    "posts": {
+      "title": "Blog Posts",
+      "intro": "Articles, tutorials, snippets, and everything else I've written on technology, development, and more.",
+      "search": "Search posts...",
+      "noResults": "No posts found. Try a different search term."
+    },
+    "projects": {
+      "title": "Projects",
+      "intro": "Here are some of the projects I've been working on. Most of them are open-source and available on GitHub.",
+      "visitWebsite": "Visit Website",
+      "visitGitHub": "View on GitHub"
+    },
+    "work": {
+      "title": "Work Experience",
+      "intro": "I've had the pleasure of working with some amazing companies over the years. Here's a summary of my professional journey.",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details"
+    }
+  }
+}
