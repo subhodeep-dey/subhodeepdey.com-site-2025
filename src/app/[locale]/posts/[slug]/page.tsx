@@ -30,6 +30,8 @@ export default function PostPage() {
   const { locale, slug } = params as { locale: string; slug: string };
   
   const [post, setPost] = useState<Post | null>(null);
+  const [prevPost, setPrevPost] = useState<Post | null>(null);
+  const [nextPost, setNextPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -45,13 +47,37 @@ export default function PostPage() {
       try {
         const response = await fetch(`/api/posts?locale=${locale}`);
         const data = await response.json();
+        
         // Access the posts array from the response data
         const postsArray = data.posts || [];
-        const foundPost = postsArray.find((p: Post) => p.slug === slug);
-
-        if (foundPost) {
-          setPost(foundPost);
+        
+        // Sort posts by date (newest first)
+        const sortedPosts = [...postsArray].sort((a, b) => {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+        
+        // Find current post index
+        const currentIndex = sortedPosts.findIndex((p: Post) => p.slug === slug);
+        
+        if (currentIndex !== -1) {
+          // Set current post
+          setPost(sortedPosts[currentIndex]);
+          
+          // Set previous post (if not first post)
+          if (currentIndex > 0) {
+            setPrevPost(sortedPosts[currentIndex - 1]);
+          } else {
+            setPrevPost(null);
+          }
+          
+          // Set next post (if not last post)
+          if (currentIndex < sortedPosts.length - 1) {
+            setNextPost(sortedPosts[currentIndex + 1]);
+          } else {
+            setNextPost(null);
+          }
         }
+        
         setLoading(false);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -83,32 +109,32 @@ export default function PostPage() {
     }
   }, [post]);
     
-    useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
-        // Calculate scroll progress
-        const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(progress);
+      // Calculate scroll progress
+      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      setScrollProgress(progress);
 
-        // Show scroll to top button after scrolling down 300px
-        setShowScrollTop(window.scrollY > 300);
+      // Show scroll to top button after scrolling down 300px
+      setShowScrollTop(window.scrollY > 300);
 
-        // Smooth secondary navbar positioning
-        if (navRef.current) {
-            // Calculate the position based on scroll
-            // This creates a smooth transition as the navbar follows the main navbar
-            // until it reaches the top, then sticks
-            const navPosition = Math.max(0, mainNavbarHeight - window.scrollY);
+      // Smooth secondary navbar positioning
+      if (navRef.current) {
+        // Calculate the position based on scroll
+        // This creates a smooth transition as the navbar follows the main navbar
+        // until it reaches the top, then sticks
+        const navPosition = Math.max(0, mainNavbarHeight - window.scrollY);
 
-            navRef.current.style.position = 'fixed';
-            navRef.current.style.top = `${navPosition}px`;
-            navRef.current.style.left = '0';
-            navRef.current.style.width = '100%';
-            navRef.current.style.zIndex = '30';
+        navRef.current.style.position = 'fixed';
+        navRef.current.style.top = `${navPosition}px`;
+        navRef.current.style.left = '0';
+        navRef.current.style.width = '100%';
+        navRef.current.style.zIndex = '30';
 
-            // Update sticky state for any additional styling if needed
-            setIsNavSticky(window.scrollY >= mainNavbarHeight);
-        }
+        // Update sticky state for any additional styling if needed
+        setIsNavSticky(window.scrollY >= mainNavbarHeight);
+      }
     };
 
     // Initial call to set correct position on load
@@ -116,7 +142,7 @@ export default function PostPage() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -151,24 +177,22 @@ export default function PostPage() {
           isNavSticky ? 'shadow-sm' : ''
         }`}
         >
-        <div className="container flex justify-between items-center py-3">
-            <Link 
+        <div className="container px-4 relative py-3">
+          {/* Back button - absolute positioning for proper centering */}
+          <Link 
             href={`/${locale}/posts`}
-            className="flex items-center gap-1 text-sm md:text-base"
-            >
+            className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1 text-sm md:text-base"
+          >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden md:inline">Back to Posts</span>
             <span className="md:hidden">Back</span>
-            </Link>
-            
-            {/* URL slug display */}
-            <div className="bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full text-xs md:text-sm">
+          </Link>
+          
+          {/* URL slug display - centered */}
+          <div className="bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full text-xs md:text-sm mx-auto w-fit">
             <span className="opacity-60">posts/</span>
             <span>{slug}</span>
-            </div>
-            
-            {/* Empty div for flex spacing */}
-            <div className="w-[100px]"></div>
+          </div>
         </div>
         
         {/* Progress bar */}
@@ -195,19 +219,19 @@ export default function PostPage() {
         </button>
       )}
       
-      <div className="container py-8 md:py-12">
+      <div className="container py-8 md:py-12 lg:pl-16">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
-          <article className="lg:w-3/4">
-            <header className="mb-8">
+          <article className="lg:w-3/4 mx-auto lg:pr-16">
+            <header className="mb-8 text-center">
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{post?.title}</h1>
-              <div className="flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+              <div className="flex justify-center flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                 <time dateTime={post?.date}>{post?.date}</time>
                 <span>•</span>
                 <span>{post?.author}</span>
               </div>
               {post?.tags && post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex justify-center flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
@@ -222,7 +246,7 @@ export default function PostPage() {
             
             <div 
               ref={contentRef} 
-              className="prose prose-zinc dark:prose-invert max-w-none
+              className="prose prose-zinc dark:prose-invert max-w-none mx-auto
                 prose-headings:font-bold prose-headings:tracking-tight
                 prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
                 prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8
@@ -263,6 +287,39 @@ export default function PostPage() {
             </aside>
 
         </div>
+        
+        {/* Previous and Next post navigation */}
+        {(prevPost || nextPost) && (
+          <div className="flex flex-row justify-between items-start mt-12 border-t pt-6 dark:border-zinc-800">
+            <div className={`${nextPost ? 'w-[48%]' : 'w-full'}`}>
+              {prevPost && (
+                <>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Previous post:</p>
+                  <Link 
+                    href={`/${locale}/posts/${prevPost.slug}`} 
+                    className="text-base sm:text-lg font-semibold hover:underline break-words"
+                  >
+                    {prevPost.title}
+                  </Link>
+                </>
+              )}
+            </div>
+            
+            <div className={`${prevPost ? 'w-[48%]' : 'w-full'} text-right`}>
+              {nextPost && (
+                <>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Next post:</p>
+                  <Link 
+                    href={`/${locale}/posts/${nextPost.slug}`} 
+                    className="text-base sm:text-lg font-semibold hover:underline break-words inline-block"
+                  >
+                    {nextPost.title}
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

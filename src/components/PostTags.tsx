@@ -10,19 +10,29 @@ interface PostTagsProps {
 export function PostTags({ locale, onTagSelect }: PostTagsProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Don't fetch if locale is not available
+    if (!locale) return;
+
     const fetchTags = async () => {
-      const response = await fetch(`/api/posts?locale=${locale}`);
-      const data = await response.json();
-      setTags(data.tags || []); // Ensure tags is an array
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/posts?locale=${locale}`);
+        const data = await response.json();
+        setTags(data.tags || []);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchTags();
   }, [locale]);
 
   const handleTagClick = (tag: string) => {
-    // If tag is already selected, remove it; otherwise add it
     const newSelectedTags = selectedTags.includes(tag)
       ? selectedTags.filter(t => t !== tag)
       : [...selectedTags, tag];
@@ -30,6 +40,23 @@ export function PostTags({ locale, onTagSelect }: PostTagsProps) {
     setSelectedTags(newSelectedTags);
     onTagSelect(newSelectedTags);
   };
+
+  // If loading and no tags yet, show a loading indicator
+  if (isLoading && tags.length === 0) {
+    return (
+      <div className="post-tags animate-pulse">
+        <h3 className="font-bold mb-3">Tags</h3>
+        <div className="flex flex-wrap gap-2">
+          {[1, 2, 3, 4].map(i => (
+            <span 
+              key={i}
+              className="inline-block w-16 h-6 bg-zinc-200 dark:bg-zinc-700 rounded-full"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="post-tags">
@@ -48,6 +75,9 @@ export function PostTags({ locale, onTagSelect }: PostTagsProps) {
             {tag}
           </span>
         ))}
+        {tags.length === 0 && !isLoading && (
+          <span className="text-zinc-500 dark:text-zinc-400">No tags found</span>
+        )}
       </div>
     </div>
   );
