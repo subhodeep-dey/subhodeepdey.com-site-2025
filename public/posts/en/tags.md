@@ -1,0 +1,10 @@
+- JavaScript
+- React
+- Next.js
+- TypeScript
+- Web Development
+- Frontend
+- Backend
+- API
+- Performance
+- Security

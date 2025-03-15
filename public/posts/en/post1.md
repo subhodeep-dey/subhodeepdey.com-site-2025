@@ -2,7 +2,7 @@
 title: "Building a Modern Web Application: A Comprehensive Guide"
 date: "2025-03-15"
 author: "John Doe"
-tags: ["web development", "frontend", "backend", "tutorial", "demo"]
+tags: ["Web Development", "frontend", "backend", "tutorial", "demo"]
 ---
 
 # Building a Modern Web Application: A Comprehensive Guide

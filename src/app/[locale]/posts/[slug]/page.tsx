@@ -44,9 +44,11 @@ export default function PostPage() {
     const fetchPost = async () => {
       try {
         const response = await fetch(`/api/posts?locale=${locale}`);
-        const posts = await response.json();
-        const foundPost = posts.find((p: Post) => p.slug === slug);
-        
+        const data = await response.json();
+        // Access the posts array from the response data
+        const postsArray = data.posts || [];
+        const foundPost = postsArray.find((p: Post) => p.slug === slug);
+
         if (foundPost) {
           setPost(foundPost);
         }
