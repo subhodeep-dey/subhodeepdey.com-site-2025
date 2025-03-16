@@ -87,7 +87,7 @@ function AboutPage() {
                 <div className="relative pb-8">
                   <h3 className="text-xl font-semibold mb-2">School Name</h3>
                   <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8">Description of the school.</p>
-                  <div className="absolute bottom-0 left-0 right-0 border-b border-zinc-300/50 dark:border-zinc-600/50"></div>
+                  <div className="absolute bottom-0 left-0 right-0 border-b border-zinc-400 dark:border-zinc-500"></div>
                 </div>
                 <div className="relative">
                   <h3 className="text-xl font-semibold mb-2">University Name</h3>
@@ -121,7 +121,7 @@ function AboutPage() {
                       </div>
                     )}
                     {index < 3 && (
-                      <div className="absolute -bottom-4 left-0 right-0 border-b border-zinc-300/50 dark:border-zinc-700/50"></div>
+                      <div className="absolute -bottom-4 left-0 right-0 border-b border-zinc-400 dark:border-zinc-600"></div>
                     )}
                   </div>
                 ))}
@@ -155,7 +155,7 @@ function AboutPage() {
                       </div>
                     )}
                     {index < 3 && (
-                      <div className="absolute -bottom-4 left-0 right-0 border-b border-zinc-300/50 dark:border-zinc-600/50"></div>
+                      <div className="absolute -bottom-4 left-0 right-0 border-b border-zinc-400 dark:border-zinc-500"></div>
                     )}
                   </div>
                 ))}

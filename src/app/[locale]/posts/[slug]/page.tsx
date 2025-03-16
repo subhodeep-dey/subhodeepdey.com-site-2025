@@ -333,32 +333,61 @@ function PostContent() {
         
         {/* Previous and Next post navigation */}
         {(prevPost || nextPost) && (
-          <div className="flex flex-row justify-between items-start mt-12 border-t pt-6 dark:border-zinc-800">
-            <div className={`${nextPost ? 'w-[48%]' : 'w-full'}`}>
-              {prevPost && (
-                <>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Previous post:</p>
-                  <Link
-                    href={`/posts/${prevPost.slug}`}
-                    className="text-base sm:text-lg font-semibold hover:underline break-words"
-                  >
-                    {prevPost.title}
-                  </Link>
-                </>
+          <div className="mt-12 border-t pt-8 dark:border-zinc-800">
+            <h3 className="text-xl font-semibold mb-6 text-center">Continue Reading</h3>
+            <div className="flex flex-col sm:flex-row justify-between items-stretch gap-6 sm:gap-8">
+              {/* Previous post card */}
+              {prevPost ? (
+                <div className={`${nextPost ? 'w-full sm:w-1/2' : 'w-full'} group`}>
+                  <div className="h-full p-5 border border-zinc-200 dark:border-zinc-800 rounded-lg transition-all duration-200 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-sm">
+                    <div className="flex flex-col h-full">
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                          <path d="m15 18-6-6 6-6"/>
+                        </svg>
+                        Previous post
+                      </p>
+                      <Link
+                        href={`/posts/${prevPost.slug}`}
+                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2"
+                      >
+                        {prevPost.title}
+                      </Link>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-auto">
+                        {prevPost.date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="hidden sm:block sm:w-1/2"></div>
               )}
-            </div>
 
-            <div className={`${prevPost ? 'w-[48%]' : 'w-full'} text-right`}>
-              {nextPost && (
-                <>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-1">Next post:</p>
-                  <Link
-                    href={`/posts/${nextPost.slug}`}
-                    className="text-base sm:text-lg font-semibold hover:underline break-words inline-block"
-                  >
-                    {nextPost.title}
-                  </Link>
-                </>
+              {/* Next post card */}
+              {nextPost ? (
+                <div className={`${prevPost ? 'w-full sm:w-1/2' : 'w-full'} group`}>
+                  <div className="h-full p-5 border border-zinc-200 dark:border-zinc-800 rounded-lg transition-all duration-200 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-sm">
+                    <div className="flex flex-col h-full">
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2 flex items-center justify-start sm:justify-end">
+                        Next post
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                          <path d="m9 18 6-6-6-6"/>
+                        </svg>
+                      </p>
+                      <Link
+                        href={`/posts/${nextPost.slug}`}
+                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2 text-left"
+                      >
+                        {nextPost.title}
+                      </Link>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-auto text-left">
+                        {nextPost.date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="hidden sm:block sm:w-1/2"></div>
               )}
             </div>
           </div>

@@ -1,4 +1,5 @@
 import '@/app/globals.css';
+import '@/styles/print.css';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/components/ThemeProvider';

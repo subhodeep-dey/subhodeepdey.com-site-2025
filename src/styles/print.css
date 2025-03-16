@@ -1,0 +1,79 @@
+@media print {
+  /* General print styles */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+
+  /* Hide unnecessary elements */
+  nav, footer, button, .print-hide {
+    display: none !important;
+  }
+
+  /* Ensure all text is visible */
+  * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Improve link display */
+  a {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 90%;
+    color: #555 !important;
+  }
+
+  /* Don't show URL for internal links */
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  /* Page breaks */
+  h1, h2, h3 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  img {
+    page-break-inside: avoid;
+    max-width: 100% !important;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  ul, ol, dl {
+    page-break-before: avoid;
+  }
+
+  /* Add page numbers */
+  @page {
+    margin: 2cm;
+  }
+
+  @page :first {
+    margin-top: 3cm;
+  }
+
+  /* Legal document specific styles */
+  .legal-section {
+    margin-bottom: 1.5em;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure proper spacing */
+  p, h2, h3 {
+    orphans: 3;
+    widows: 3;
+  }
+}

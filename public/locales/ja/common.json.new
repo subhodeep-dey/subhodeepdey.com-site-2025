@@ -25,7 +25,9 @@
       "home": "ホーム",
       "work": "職歴",
       "projects": "プロジェクト",
+      "about": "自己紹介",
       "posts": "ブログ",
+      "more": "もっと...",
       "sayHi": "お問い合わせ"
     },
     "contactForm": {
@@ -42,15 +44,21 @@
       "system": "システム設定"
     },
     "languageSwitch": {
-      "en": "英語",
-      "ko": "韓国語",
+      "en": "English",
+      "ko": "한국어",
       "ja": "日本語"
     },
     "posts": {
       "title": "ブログ記事",
       "intro": "テクノロジー、開発、その他について書いた記事、チュートリアル、スニペットなど。",
       "search": "記事を検索...",
-      "noResults": "記事が見つかりません。別の検索語をお試しください。"
+      "noResults": "記事が見つかりません。別の検索語をお試しください。",
+      "pagination": {
+        "prev": "前へ",
+        "next": "次へ",
+        "page": "ページ",
+        "of": "/"
+      }
     },
     "projects": {
       "title": "プロジェクト",
