@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    let { firstName, lastName, email, message, captchaToken } = body;
+    let { firstName, lastName, email, message } = body;
+    const { captchaToken } = body;
 
     // Sanitize inputs
     firstName = sanitizeInput(firstName);

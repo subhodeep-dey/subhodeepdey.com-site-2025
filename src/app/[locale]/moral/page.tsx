@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from 'next-intl/server';
 import LegalPageLayout from '@/components/LegalPageLayout';
 
-export async function generateMetadata({ params }: { params: { locale: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   // Ensure params is fully resolved
   const resolvedParams = await params;
   const locale = resolvedParams.locale;

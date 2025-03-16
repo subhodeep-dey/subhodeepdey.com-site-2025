@@ -1,6 +1,9 @@
 import '@/app/globals.css';
 import '@/styles/print.css';
 import { Inter } from 'next/font/google';
+import Script from "next/script"; 
+import { Monitoring } from "react-scan/monitoring/next";
+import { Analytics } from '@vercel/analytics/next';
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { NavbarSkeleton } from '@/components/ui/skeleton';
@@ -47,7 +50,7 @@ export default async function RootLayout({
   children: ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = await params;
+  const { locale } = params;
 
   // Validate that the locale is supported
   if (!hasLocale(routing.locales, locale)) {
@@ -66,7 +69,19 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+      <Script
+          src="https://unpkg.com/react-scan/dist/install-hook.global.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased">
+      <Monitoring
+          apiKey="Cb-lmjADfG-2aoebS3U07ofe68P82BzH" // Safe to expose publically
+          url="https://monitoring.react-scan.com/api/v1/ingest"
+          commit={process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA} // optional but recommended
+          branch={process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF} // optional but recommended
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider defaultTheme="dark" storageKey="Subhodeep-theme">
             <div className="flex flex-col min-h-screen">
@@ -77,6 +92,7 @@ export default async function RootLayout({
               <ScrollToTop />
               <Toaster position="bottom-right" />
             </div>
+            <Analytics />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -65,9 +65,9 @@ export function NewsletterForm({ className = "" }: { className?: string }) {
       setTimeout(() => {
         setIsSuccess(false)
       }, 5000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Newsletter subscription error:", error)
-      toast.error(error.message || "Failed to subscribe to newsletter")
+      toast.error(error instanceof Error ? error.message : "Failed to subscribe to newsletter")
     } finally {
       setIsSubmitting(false)
     }

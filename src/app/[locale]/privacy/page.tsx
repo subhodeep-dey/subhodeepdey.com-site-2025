@@ -4,7 +4,7 @@ import LegalPageLayout from '@/components/LegalPageLayout';
 import TableOfContents from '@/components/TableOfContents';
 import { Shield, User, Cookie, Database, ExternalLink, Bell, Mail } from 'lucide-react';
 
-export async function generateMetadata({ params }: { params: { locale: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   // Ensure params is fully resolved
   const resolvedParams = await params;
   const locale = resolvedParams.locale;

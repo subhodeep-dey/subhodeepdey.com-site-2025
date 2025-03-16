@@ -25,9 +25,9 @@ export default function LegalPageLayout({ title, lastUpdated, children }: LegalP
   }, []);
 
   // Extract locale from pathname
-  const locale = pathname.split('/')[1] === 'en' || pathname.split('/')[1] === 'ja' || pathname.split('/')[1] === 'ko'
-    ? pathname.split('/')[1]
-    : 'en';
+  const locale = pathname && (pathname.split('/')[1] === 'en' || pathname.split('/')[1] === 'ja' || pathname.split('/')[1] === 'ko')
+  ? pathname.split('/')[1]
+  : 'en';
 
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 min-h-screen print:bg-white print:dark:bg-white">

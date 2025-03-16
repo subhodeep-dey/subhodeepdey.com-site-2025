@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     if (getListsResponse.ok) {
       const listsData = await getListsResponse.json();
       // Look for a list named "Newsletter Subscribers"
-      const newsletterList = listsData.lists.find((list: any) => list.name === "Newsletter Subscribers");
+      const newsletterList = listsData.lists.find((list: { name: string; id: number }) => list.name === "Newsletter Subscribers");
 
       if (newsletterList) {
         listId = newsletterList.id;
