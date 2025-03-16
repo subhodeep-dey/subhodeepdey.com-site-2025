@@ -30,7 +30,10 @@ interface TableOfContents {
 function PostContent() {
   const t = useTranslations("common");
   const params = useParams();
-  const { locale, slug } = params as { locale: string; slug: string };
+  // Access params directly to avoid destructuring which can cause issues
+  // Add null check to handle case where params might be null
+  const locale = params?.locale as string || '';
+  const slug = params?.slug as string || '';
 
   const [post, setPost] = useState<Post | null>(null);
   const [prevPost, setPrevPost] = useState<Post | null>(null);
@@ -113,75 +116,112 @@ function PostContent() {
   }, [post]);
     
   useEffect(() => {
-    const handleScroll = () => {
-      // Calculate scroll progress based on article content
+    // Store article dimensions to avoid recalculating on every scroll
+    let articleTop = 0;
+    let articleBottom = 0;
+    let viewportHeight = window.innerHeight;
+    let totalScrollableDistance = 0;
+    let lastScrollY = window.scrollY;
+
+    // Function to calculate and cache article dimensions
+    const calculateArticleDimensions = () => {
       if (contentRef.current) {
-        // Get the article element's position and dimensions
         const articleRect = contentRef.current.getBoundingClientRect();
-        const articleTop = window.scrollY + articleRect.top;
-        const articleBottom = articleTop + articleRect.height;
-
-        // Get the viewport height
-        const viewportHeight = window.innerHeight;
-
-        // Current scroll position
-        const scrollPosition = window.scrollY;
-
-        // Calculate the visible portion of the article
-        // If we haven't reached the article yet
-        if (scrollPosition < articleTop) {
-          setScrollProgress(0);
-        }
-        // If we've scrolled past the article
-        else if (scrollPosition + viewportHeight >= articleBottom) {
-          setScrollProgress(100);
-        }
-        // We're somewhere in the article
-        else {
-          // Calculate how much of the article we've scrolled through
-          const totalScrollableDistance = articleBottom - articleTop - viewportHeight;
-          const scrolledDistance = scrollPosition - articleTop;
-
-          // Calculate progress as a percentage (0 to 100)
-          const progress = Math.max(0, Math.min(100, (scrolledDistance / totalScrollableDistance) * 100));
-          setScrollProgress(progress);
-        }
-      } else {
-        // Fallback to original calculation if contentRef is not available
-        const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(progress);
-      }
-
-      // Check if scrolled more than 2%
-      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrollPercentage = (window.scrollY / totalHeight) * 100;
-      setIsScrolled(scrollPercentage >= 2);
-
-      // Smooth secondary navbar positioning
-      if (navRef.current) {
-        // Calculate the position based on scroll
-        // This creates a smooth transition as the navbar follows the main navbar
-        // until it reaches the top, then sticks
-        const navPosition = Math.max(0, mainNavbarHeight - window.scrollY);
-
-        navRef.current.style.position = 'fixed';
-        navRef.current.style.top = `${navPosition}px`;
-        navRef.current.style.left = '0';
-        navRef.current.style.width = '100%';
-        navRef.current.style.zIndex = '30';
-
-        // Update sticky state for any additional styling if needed
-        setIsNavSticky(window.scrollY >= mainNavbarHeight);
+        articleTop = window.scrollY + articleRect.top;
+        articleBottom = articleTop + articleRect.height;
+        viewportHeight = window.innerHeight;
+        totalScrollableDistance = articleBottom - articleTop - viewportHeight;
       }
     };
 
-    // Initial call to set correct position on load
-    // Use a small timeout to ensure the content is rendered
-    setTimeout(handleScroll, 100);
+    // Use requestAnimationFrame for smoother updates
+    let ticking = false;
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      lastScrollY = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Calculate scroll progress based on article content
+          if (contentRef.current) {
+            // Current scroll position
+            const scrollPosition = lastScrollY;
+
+            // Calculate the visible portion of the article
+            // If we haven't reached the article yet
+            if (scrollPosition < articleTop) {
+              setScrollProgress(0);
+            }
+            // If we've scrolled past the article
+            else if (scrollPosition + viewportHeight >= articleBottom) {
+              setScrollProgress(100);
+            }
+            // We're somewhere in the article
+            else {
+              // Calculate how much of the article we've scrolled through
+              const scrolledDistance = scrollPosition - articleTop;
+
+              // Calculate progress as a percentage (0 to 100)
+              const progress = Math.max(0, Math.min(100, (scrolledDistance / totalScrollableDistance) * 100));
+              setScrollProgress(progress);
+            }
+          } else {
+            // Fallback to original calculation if contentRef is not available
+            const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (lastScrollY / totalHeight) * 100;
+            setScrollProgress(progress);
+          }
+
+          // Check if scrolled more than 2%
+          const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          const scrollPercentage = (lastScrollY / totalHeight) * 100;
+          setIsScrolled(scrollPercentage >= 2);
+
+          // Smooth secondary navbar positioning
+          if (navRef.current) {
+            // Calculate the position based on scroll
+            // This creates a smooth transition as the navbar follows the main navbar
+            // until it reaches the top, then sticks
+            const navPosition = Math.max(0, mainNavbarHeight - lastScrollY);
+
+            navRef.current.style.position = 'fixed';
+            navRef.current.style.top = `${navPosition}px`;
+            navRef.current.style.left = '0';
+            navRef.current.style.width = '100%';
+            navRef.current.style.zIndex = '30';
+
+            // Update sticky state for any additional styling if needed
+            setIsNavSticky(lastScrollY >= mainNavbarHeight);
+          }
+
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    // Calculate dimensions initially and when content changes
+    const calculateAndSetup = () => {
+      calculateArticleDimensions();
+      handleScroll();
+    };
+
+    // Initial calculation after a short delay to ensure DOM is ready
+    const initialTimer = setTimeout(calculateAndSetup, 100);
+
+    // Recalculate on resize
+    window.addEventListener('resize', calculateArticleDimensions);
+
+    // Handle scroll events
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Clean up all event listeners and timers
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', calculateArticleDimensions);
+      clearTimeout(initialTimer);
+    };
   }, [post]);
 
   // Scroll to top function removed - now handled globally
@@ -207,7 +247,7 @@ function PostContent() {
           isNavSticky ? 'shadow-sm' : ''
         }`}
         >
-        <div className="container px-4 relative py-3">
+        <div className="container px-4 sm:px-6 relative py-3">
           {/* Back button - absolute positioning for proper centering */}
           <Link
             href={`/posts`}
@@ -230,11 +270,16 @@ function PostContent() {
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-0.5 bg-transparent">
-            <div
-            className="h-full bg-black dark:bg-white transition-all duration-150 ease-out"
-            style={{ width: `${scrollProgress}%`, opacity: scrollProgress > 0 ? 1 : 0 }}
-            />
+        <div className="w-full h-0.5 bg-transparent overflow-hidden">
+          <div
+            className="h-full bg-black dark:bg-white will-change-[width,transform] transition-transform duration-150 ease-out"
+            style={{
+              width: `${scrollProgress}%`,
+              opacity: scrollProgress > 0 ? 1 : 0,
+              transform: 'translateZ(0)',  // Hardware acceleration
+              transformOrigin: 'left'
+            }}
+          />
         </div>
         </div>
 
@@ -244,10 +289,10 @@ function PostContent() {
 
       {/* Scroll to top button removed - now handled globally */}
       
-      <div className="container py-8 md:py-12 lg:pl-16">
+      <div className="container px-4 sm:px-6 py-8 md:py-12" >
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
-          <article className="lg:w-3/4 mx-auto lg:pr-16">
+          <article className="lg:w-3/4 mx-auto lg:pr-8">
             <header className="mb-8 text-center">
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{post?.title}</h1>
               <div className="flex justify-center flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 mb-4">
@@ -291,10 +336,9 @@ function PostContent() {
               />
             </div>
           </article>
-          
           {/* Table of contents sidebar - hidden on mobile */}
             <aside className="hidden lg:block lg:w-1/4 order-first lg:order-last">
-            <div className="sticky top-24 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg max-h-[calc(100vh-160px)] overflow-y-auto mb-8">
+            <div className="sticky top-24 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg max-h-[calc(100vh-160px)] overflow-y-auto mb-8 ml-0 lg:ml-4">
                 <h3 className="text-lg font-semibold mb-3">Contents</h3>
                 <nav className="space-y-2 text-sm">
                 {toc.map((item) => (
@@ -333,7 +377,7 @@ function PostContent() {
         
         {/* Previous and Next post navigation */}
         {(prevPost || nextPost) && (
-          <div className="mt-12 border-t pt-8 dark:border-zinc-800">
+          <div className="mt-12 border-t pt-8 dark:border-zinc-800 px-0">
             <h3 className="text-xl font-semibold mb-6 text-center">Continue Reading</h3>
             <div className="flex flex-col sm:flex-row justify-between items-stretch gap-6 sm:gap-8">
               {/* Previous post card */}

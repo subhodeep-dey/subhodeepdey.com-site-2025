@@ -30,7 +30,7 @@ export function Footer() {
           {/* Left column - Info */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left mb-10 md:mb-0 w-full md:w-auto">
             <div className="mb-4 md:mb-6">
-              <div className="h-12 md:h-14 font-bold text-5xl  text-zinc-700 dark:text-zinc-300">
+              <div className="h-12 md:h-14 font-bold text-xl md:text-5xl  text-zinc-700 dark:text-zinc-300">
                 Subhodeep Dey
               </div>
             </div>

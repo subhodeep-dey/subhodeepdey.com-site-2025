@@ -31,18 +31,18 @@ export default function ImpressumPage() {
         </section>
 
         <section className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-          <h2 className="text-xl font-semibold mb-4">{t('impressum.contact')}</h2>
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center">
-              <span className="font-medium w-24">{t('impressum.email')}:</span>
-              <a href="mailto:contact@example.com" className="text-blue-600 dark:text-blue-400 hover:underline">contact@example.com</a>
-            </div>
-            <div className="flex items-center">
-              <span className="font-medium w-24">{t('impressum.website')}:</span>
-              <a href="https://www.example.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">www.example.com</a>
-            </div>
+        <h2 className="text-xl font-semibold mb-4">{t('impressum.contact')}</h2>
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-col">
+            <span className="font-medium text-sm text-zinc-600 dark:text-zinc-400 mb-1">{t('impressum.email')}:</span>
+            <a href="mailto:contact@example.com" className="text-blue-600 dark:text-blue-400 hover:underline">contact@example.com</a>
           </div>
-        </section>
+          <div className="flex flex-col">
+            <span className="font-medium text-sm text-zinc-600 dark:text-zinc-400 mb-1">{t('impressum.website')}:</span>
+            <a href="https://www.example.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">www.example.com</a>
+          </div>
+        </div>
+      </section>
 
         <section className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
           <h2 className="text-xl font-semibold mb-4">{t('impressum.businessRegistration')}</h2>

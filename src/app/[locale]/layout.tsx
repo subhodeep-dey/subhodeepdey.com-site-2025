@@ -50,7 +50,8 @@ export default async function RootLayout({
   children: ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  // Access locale directly from params to avoid the sync access issue
+  const locale = params.locale;
 
   // Validate that the locale is supported
   if (!hasLocale(routing.locales, locale)) {
