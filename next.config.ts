@@ -6,7 +6,9 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  distDir: process.env.NODE_ENV === "production" ? "build" : ".next",
+  // Remove the custom distDir configuration for Vercel deployment
+  // distDir: process.env.NODE_ENV === "production" ? "build" : ".next",
+  
   // Configure pageExtensions to include md and mdx
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   images: {
@@ -19,10 +21,8 @@ const nextConfig: NextConfig = {
   },
   // Add webpack configuration for ReactComponentName plugin
   webpack: (config) => {
-    // Only enable in production
-    if (process.env.NODE_ENV === 'production') {
-      config.plugins.push(ReactComponentName({})); 
-    }
+    // Apply the ReactComponentName plugin in all environments
+    config.plugins.push(ReactComponentName({})); 
     return config;
   },
 };
