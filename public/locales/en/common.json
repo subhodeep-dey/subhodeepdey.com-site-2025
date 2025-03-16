@@ -98,6 +98,17 @@
       "submit": "Send Message",
       "success": "Message sent successfully!",
       "error": "Failed to send message. Please try again."
+    },  
+    "contactPage": {
+      "title": "Contact Form",
+    "contactInfo": "7976787654",
+    "address": {
+      "title": "Our Location",
+      "line1": "123 Innovation Street",
+      "line2": "Tech Valley, CA 94103"
+    },
+    "viewLargerMap": "View Larger Map",
+    "description": "Have questions or want to work together? Feel free to reach out using the form below or contact us directly using the information provided."
     },
     "themeSwitch": {
       "light": "Light",

@@ -28,12 +28,37 @@ declare global {
       execute: (widgetId?: string) => void;
       getResponse: (widgetId?: string) => string;
     };
+    onHCaptchaLoad?: () => void;
   }
 }
 
 export function ContactForm() {
   const t = useTranslations("common")
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Add custom CSS for hCaptcha iframe
+  useEffect(() => {
+    // Create a style element
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @media (max-width: 400px) {
+        iframe[src*="hcaptcha.com"] {
+          transform: scale(0.9);
+          transform-origin: center;
+          max-width: 100%;
+        }
+        #h-captcha {
+          display: flex;
+          justify-content: center;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -356,19 +381,22 @@ export function ContactForm() {
   return (
     <>
       <Script
-        src={`https://js.hcaptcha.com/1/api.js`}
+        src="https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHCaptchaLoad"
         strategy="lazyOnload"
-        onLoad={() => setHCaptchaLoaded(true)}
+        onLoad={() => {
+          window.onHCaptchaLoad = () => setHCaptchaLoaded(true);
+          if (window.hcaptcha) setHCaptchaLoaded(true);
+        }}
       />
 
-      <Card className="w-full max-w-md mx-auto bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
-        <CardHeader>
+      <Card className="w-full bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+        <CardHeader className="px-4 sm:px-6">
           <CardTitle className="text-xl">{t("home.formTitle")}</CardTitle>
           <CardDescription className="text-zinc-600 dark:text-zinc-400">
             Fill out the form below to send me a message.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="text-sm font-medium mb-1">Name (required)</div>
             <div className="grid grid-cols-2 gap-4">
@@ -468,8 +496,10 @@ export function ContactForm() {
             </div>
 
             {/* hCaptcha container */}
-            <div className="my-4">
-              <div id="h-captcha" ref={captchaRef}></div>
+            <div className="my-4 overflow-x-hidden">
+              <div className="flex justify-center sm:justify-start">
+                <div id="h-captcha" ref={captchaRef}></div>
+              </div>
             </div>
 
             <Button
