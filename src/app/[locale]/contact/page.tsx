@@ -82,13 +82,7 @@ function ContactContent() {
 
         {/* Newsletter Section */}
         <div className="mt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Stay Updated</h2>
-            <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Subscribe to my newsletter to receive updates on new content, projects, and more.
-            </p>
-          </div>
-          <div className="max-w-md mx-auto">
+          <div className="max-w-3xl mx-auto">
             <NewsletterForm />
           </div>
         </div>

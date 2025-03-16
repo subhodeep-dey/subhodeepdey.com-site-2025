@@ -43,11 +43,12 @@ export function LanguageSwitcher() {
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" sideOffset={10}>
         {routing.locales.map((localeCode) => (
           <DropdownMenuItem
             key={localeCode}
             onClick={() => changeLanguage(localeCode)}
+            className={locale === localeCode ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}
           >
             <span className={locale === localeCode ? "font-bold" : ""}>
               {getLanguageName(localeCode)}

@@ -52,13 +52,26 @@ function AboutPage() {
               </a>
             </div>
             <div className="flex-shrink-0">
-              <Image
-                src="/path/to/image.jpg"
-                alt="Profile"
-                width={300}
-                height={400}
-                className="rounded-lg"
-              />
+              <div className="relative w-[300px] h-[400px] overflow-hidden">
+                <div className="absolute inset-0 bg-white dark:bg-zinc-900">
+                  {/* Dark theme image */}
+                  <Image
+                    src="/images/assets/Photo black n white 2048x2048.png"
+                    alt="Profile"
+                    fill
+                    className="object-cover hidden dark:block"
+                    priority
+                  />
+                  {/* Light theme image */}
+                  <Image
+                    src="/images/assets/Photo colored 2048x2048 black bg.png"
+                    alt="Profile"
+                    fill
+                    className="object-cover dark:hidden block"
+                    priority
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

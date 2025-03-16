@@ -23,7 +23,7 @@ import { AlertCircle } from "lucide-react"
 declare global {
   interface Window {
     hcaptcha: {
-      render: (container: string, params: any) => string;
+      render: (container: string, params: { sitekey: string; theme: string; callback: (token: string) => void; "expired-callback": () => void; "error-callback": () => void; }) => string;
       reset: (widgetId?: string) => void;
       execute: (widgetId?: string) => void;
       getResponse: (widgetId?: string) => string;
@@ -334,9 +334,13 @@ export function ContactForm() {
         window.hcaptcha.reset(widgetIdRef.current)
         setCaptchaToken("")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Form submission error:", error)
-      toast.error(error.message || t("contactForm.error"))
+      if (error instanceof Error) {
+        toast.error(error.message || t("contactForm.error"))
+      } else {
+        toast.error(t("contactForm.error"))
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -357,10 +361,10 @@ export function ContactForm() {
         onLoad={() => setHCaptchaLoaded(true)}
       />
 
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="w-full max-w-md mx-auto bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
         <CardHeader>
           <CardTitle className="text-xl">{t("home.formTitle")}</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-zinc-600 dark:text-zinc-400">
             Fill out the form below to send me a message.
           </CardDescription>
         </CardHeader>
@@ -470,7 +474,7 @@ export function ContactForm() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-zinc-800 hover:bg-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white"
               disabled={isSubmitting || !captchaToken || isRateLimited}
             >
               {isSubmitting ? "Sending..." : isRateLimited ? `Try again in ${formatRateLimitTime()}` : t("contactForm.submit")}

@@ -347,7 +347,7 @@ function PostContent() {
                 </>
               )}
             </div>
-            
+
             <div className={`${prevPost ? 'w-[48%]' : 'w-full'} text-right`}>
               {nextPost && (
                 <>
@@ -363,6 +363,7 @@ function PostContent() {
             </div>
           </div>
         )}
+
       </div>
     </>
   );

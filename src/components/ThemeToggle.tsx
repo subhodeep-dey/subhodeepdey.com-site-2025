@@ -39,26 +39,26 @@ export function ThemeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem 
+      <DropdownMenuContent align="end" sideOffset={10}>
+        <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className={theme === "light" ? "bg-zinc-100 dark:bg-zinc-800" : ""}
+          className={theme === "light" ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}
         >
           <Sun className="mr-2 h-4 w-4" />
           <span className="flex-1">{t("themeSwitch.light")}</span>
           {theme === "light" && <Check className="h-4 w-4 ml-2" />}
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className={theme === "dark" ? "bg-zinc-100 dark:bg-zinc-800" : ""}
+          className={theme === "dark" ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}
         >
           <Moon className="mr-2 h-4 w-4" />
           <span className="flex-1">{t("themeSwitch.dark")}</span>
           {theme === "dark" && <Check className="h-4 w-4 ml-2" />}
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => setTheme("system")}
-          className={theme === "system" ? "bg-zinc-100 dark:bg-zinc-800" : ""}
+          className={theme === "system" ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}
         >
           <Laptop className="mr-2 h-4 w-4" />
           <span className="flex-1">{t("themeSwitch.system")}</span>

@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PostSearch } from '@/components/PostSearch';
 import { PostTags } from '@/components/PostTags';
+import { PostYears } from '@/components/PostYears';
 import { PostListSkeleton, TagsSkeleton, TextSkeleton, HeadingSkeleton } from '@/components/ui/skeleton';
-import { LazyLoad } from '@/components/LazyLoad';
+import { NewsletterForm } from '@/components/NewsletterForm';
 
 interface Post {
   id: number;
@@ -36,6 +37,7 @@ function PostsContent({ params }: { params: Promise<{ locale: string }> }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [locale, setLocale] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedYears, setSelectedYears] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
 
@@ -63,22 +65,27 @@ function PostsContent({ params }: { params: Promise<{ locale: string }> }) {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedTags]);
+  }, [searchQuery, selectedTags, selectedYears]);
 
-  // Filter posts based on search query and tags
+  // Filter posts based on search query, tags, and years
   const filteredPosts = useMemo(() => {
     // If no filters are applied, return all posts
-    if (!searchQuery.trim() && selectedTags.length === 0) return posts;
+    if (!searchQuery.trim() && selectedTags.length === 0 && selectedYears.length === 0) return posts;
 
     return posts.filter(post => {
       // Check if post has any of the selected tags (if tags are selected)
       const matchesTags = selectedTags.length === 0 ||
         (post.tags && selectedTags.some(tag => post.tags.includes(tag)));
 
-      // If there's no search query, just check the tags
-      if (!searchQuery.trim()) return matchesTags;
+      // Check if post is from any of the selected years (if years are selected)
+      const postYear = post.date ? new Date(post.date).getFullYear().toString() : "";
+      const matchesYears = selectedYears.length === 0 ||
+        selectedYears.includes(postYear);
 
-      // Otherwise, check both search query and tags
+      // If there's no search query, just check the tags and years
+      if (!searchQuery.trim()) return matchesTags && matchesYears;
+
+      // Otherwise, check search query, tags, and years
       const lowercasedQuery = searchQuery.toLowerCase();
       const matchesSearch =
         (post.title && post.title.toLowerCase().includes(lowercasedQuery)) ||
@@ -86,9 +93,9 @@ function PostsContent({ params }: { params: Promise<{ locale: string }> }) {
         (post.author && post.author.toLowerCase().includes(lowercasedQuery)) ||
         (post.tags && post.tags.some(tag => tag.toLowerCase().includes(lowercasedQuery)));
 
-      return matchesTags && matchesSearch;
+      return matchesTags && matchesYears && matchesSearch;
     });
-  }, [searchQuery, selectedTags, posts]);
+  }, [searchQuery, selectedTags, selectedYears, posts]);
 
   // Group posts by year
   const postsByYear = useMemo(() => {
@@ -159,9 +166,10 @@ function PostsContent({ params }: { params: Promise<{ locale: string }> }) {
           <PostSearch onSearch={setSearchQuery} />
         </div>
 
-        {/* Mobile tags at the top on small screens */}
+        {/* Mobile filters at the top on small screens */}
         <div className="md:hidden mb-6">
           <PostTags locale={locale} onTagSelect={setSelectedTags} />
+          <PostYears locale={locale} onYearSelect={setSelectedYears} />
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">
@@ -250,9 +258,17 @@ function PostsContent({ params }: { params: Promise<{ locale: string }> }) {
             )}
           </div>
 
-          {/* Desktop tags on the side */}
+          {/* Desktop filters on the side */}
           <div className="hidden md:block md:w-1/4">
             <PostTags locale={locale} onTagSelect={setSelectedTags} />
+            <PostYears locale={locale} onYearSelect={setSelectedYears} />
+          </div>
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="mt-16">
+          <div className="max-w-3xl mx-auto">
+            <NewsletterForm />
           </div>
         </div>
       </div>
@@ -272,9 +288,12 @@ const PostsPageSkeleton = () => {
           <div className="h-12 w-full bg-zinc-100 dark:bg-zinc-800 rounded-lg animate-pulse" />
         </div>
 
-        {/* Mobile tags skeleton */}
+        {/* Mobile filters skeleton */}
         <div className="md:hidden mb-6">
           <TagsSkeleton />
+          <div className="mt-6">
+            <TagsSkeleton />
+          </div>
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">
@@ -282,9 +301,12 @@ const PostsPageSkeleton = () => {
             <PostListSkeleton count={5} />
           </div>
 
-          {/* Desktop tags skeleton */}
+          {/* Desktop filters skeleton */}
           <div className="hidden md:block md:w-1/4">
             <TagsSkeleton />
+            <div className="mt-6">
+              <TagsSkeleton />
+            </div>
           </div>
         </div>
       </div>

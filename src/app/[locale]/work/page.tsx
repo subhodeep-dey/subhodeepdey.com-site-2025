@@ -109,36 +109,42 @@ function WorkContent() {
 
         <div className="space-y-8">
           {WORK_EXPERIENCE.map((job) => (
-            <Card key={job.id} className="overflow-hidden">
+            <Card key={job.id} className="overflow-hidden bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
               <CardHeader>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                   <div>
-                    <CardTitle className="text-2xl flex items-center gap-3">
-                      {job.position}
+                    <CardTitle className="text-2xl flex flex-wrap items-center gap-3">
+                      <span className="text-zinc-800 dark:text-zinc-100">{job.position}</span>
                       <span className="text-zinc-500 dark:text-zinc-400">at</span>
-                      {job.company}
+                      <span className="text-zinc-800 dark:text-zinc-100">{job.company}</span>
                       {job.badge && (
                         <Badge variant="outline" className="ml-2 text-xs py-0 h-5">
                           {job.badge}
                         </Badge>
                       )}
                     </CardTitle>
-                    <CardDescription className="text-base mt-1">
+                    <CardDescription className="text-base mt-1 text-zinc-600 dark:text-zinc-400">
                       {job.location} <span className="mx-2">•</span> {job.period}
                     </CardDescription>
                   </div>
                 </div>
 
-                <p className="text-zinc-600 dark:text-zinc-400">
-                  {job.description}
-                </p>
-                <p className="text-zinc-800 dark:text-zinc-200">
-                  {job.details}
-                </p>
+                <div className="space-y-3 mt-2">
+                  <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    {job.description}
+                  </p>
+                  <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
+                    {job.details}
+                  </p>
+                </div>
 
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-2 mt-5">
                   {job.skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="px-2 py-1">
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="px-2 py-1 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                    >
                       {skill}
                     </Badge>
                   ))}
@@ -148,7 +154,7 @@ function WorkContent() {
               <CardContent>
                 <Button
                   variant="ghost"
-                  className="w-full flex justify-center items-center gap-2 text-zinc-600 dark:text-zinc-400"
+                  className="w-full flex justify-center items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   onClick={() => toggleJobDetails(job.id)}
                 >
                   {expandedJobs.includes(job.id) ? (
@@ -170,10 +176,10 @@ function WorkContent() {
                       {job.contributions.map((contribution, index) => (
                         <div
                           key={index}
-                          className="p-3 rounded-lg bg-gradient-to-r from-zinc-100 to-zinc-50 dark:from-zinc-800 dark:to-zinc-800/70 text-zinc-700 dark:text-zinc-300 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 flex items-center"
+                          className="p-3 rounded-lg bg-gradient-to-r from-zinc-100 to-zinc-50 dark:from-zinc-800/90 dark:to-zinc-900 text-zinc-700 dark:text-zinc-300 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 flex items-center"
                         >
                           <div className="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-3 flex-shrink-0"></div>
-                          <span>{contribution}</span>
+                          <span className="leading-relaxed">{contribution}</span>
                         </div>
                       ))}
                     </div>

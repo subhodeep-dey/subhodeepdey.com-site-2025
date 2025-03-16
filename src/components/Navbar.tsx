@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export function Navbar() {
   const t = useTranslations("common")
@@ -49,7 +50,7 @@ export function Navbar() {
 
         // Scroll to the section with offset for the header
         window.scrollTo({
-          top: offsetPosition - headerHeight - mobilePadding,
+          top: offsetPosition,
           behavior: 'smooth'
         })
       }
@@ -57,14 +58,14 @@ export function Navbar() {
   }
 
   return (
-    <header className="w-full py-4 border-b border-zinc-200 dark:border-zinc-800">
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-6">
+    <header className={`w-full py-4 ${isMenuOpen ? '' : 'border-b border-zinc-200 dark:border-zinc-800'}`}>
+      <div className="container flex items-center justify-between relative">
+        <div className="flex items-center gap-4">
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden z-10"
             onClick={toggleMenu}
           >
             {isMenuOpen ? (
@@ -75,46 +76,70 @@ export function Navbar() {
             <span className="sr-only">Toggle menu</span>
           </Button>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/"
-              className={`nav-link ${isActive("/")}`}
-            >
-              {t("navigation.home")}
-            </Link>
-            <Link
-              href="/work"
-              className={`nav-link ${isActive("/work")}`}
-            >
-              {t("navigation.work")}
-            </Link>
-            <Link
-              href="/projects"
-              className={`nav-link ${isActive("/projects")}`}
-            >
-              {t("navigation.projects")}
-            </Link>
-            <Link
-              href="/about"
-              className={`nav-link ${isActive("/about")}`}
-            >
-              {t("navigation.about")}
-            </Link>
-            <Link
-              href="/posts"
-              className={`nav-link ${isActive("/posts")}`}
-            >
-              {t("navigation.posts")}
-            </Link>
-            <a
-              href="#more-on-this-site"
-              className="nav-link cursor-pointer"
-              onClick={scrollToMoreSection}
-            >
-              {t("navigation.more")}
-            </a>
-          </nav>
+          {/* Logo - Hidden on mobile, visible on desktop */}
+          <Link href="/" className="hidden md:flex items-center">
+            <Image
+              src="/images/assets/sdeysocial logo.svg"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="rounded-lg shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"
+            />
+          </Link>
+        </div>
+
+        {/* Centered Logo for Mobile */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 md:hidden">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/assets/sdeysocial logo.svg"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="rounded-lg shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"
+            />
+          </Link>
+        </div>
+
+        {/* Desktop Nav Links */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link
+            href="/"
+            className={`nav-link ${isActive("/")}`}
+          >
+            {t("navigation.home")}
+          </Link>
+          <Link
+            href="/work"
+            className={`nav-link ${isActive("/work")}`}
+          >
+            {t("navigation.work")}
+          </Link>
+          <Link
+            href="/projects"
+            className={`nav-link ${isActive("/projects")}`}
+          >
+            {t("navigation.projects")}
+          </Link>
+          <Link
+            href="/about"
+            className={`nav-link ${isActive("/about")}`}
+          >
+            {t("navigation.about")}
+          </Link>
+          <Link
+            href="/posts"
+            className={`nav-link ${isActive("/posts")}`}
+          >
+            {t("navigation.posts")}
+          </Link>
+          <a
+            href="#more-on-this-site"
+            className="nav-link cursor-pointer"
+            onClick={scrollToMoreSection}
+          >
+            {t("navigation.more")}
+          </a>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -131,58 +156,60 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-zinc-900 py-4 border-b border-zinc-200 dark:border-zinc-800">
-          <nav className="container flex flex-col space-y-4">
-            <Link
-              href="/"
-              className={`nav-link ${isActive("/")} text-lg`}
-              onClick={toggleMenu}
-            >
-              {t("navigation.home")}
-            </Link>
-            <Link
-              href="/work"
-              className={`nav-link ${isActive("/work")} text-lg`}
-              onClick={toggleMenu}
-            >
-              {t("navigation.work")}
-            </Link>
-            <Link
-              href="/projects"
-              className={`nav-link ${isActive("/projects")} text-lg`}
-              onClick={toggleMenu}
-            >
-              {t("navigation.projects")}
-            </Link>
-            <Link
-              href="/about"
-              className={`nav-link ${isActive("/about")} text-lg`}
-              onClick={toggleMenu}
-            >
-              {t("navigation.about")}
-            </Link>
-            <Link
-              href="/posts"
-              className={`nav-link ${isActive("/posts")} text-lg`}
-              onClick={toggleMenu}
-            >
-              {t("navigation.posts")}
-            </Link>
-            <a
-              href="#more-on-this-site"
-              className="nav-link text-lg cursor-pointer"
-              onClick={scrollToMoreSection}
-            >
-              {t("navigation.more")}
-            </a>
-            <Link
-              href="/contact"
-              className="rounded-full px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 transition-opacity w-fit mt-2"
-              onClick={toggleMenu}
-            >
-              {t("navigation.sayHi")}
-            </Link>
-          </nav>
+        <div className="md:hidden bg-white dark:bg-zinc-900 pt-6 pb-6 mt-4 border-b border-zinc-200 dark:border-zinc-800 shadow-md">
+          <div className="container">
+            <nav className="flex flex-col space-y-4">
+              <Link
+                href="/"
+                className={`nav-link ${isActive("/")} text-lg`}
+                onClick={toggleMenu}
+              >
+                {t("navigation.home")}
+              </Link>
+              <Link
+                href="/work"
+                className={`nav-link ${isActive("/work")} text-lg`}
+                onClick={toggleMenu}
+              >
+                {t("navigation.work")}
+              </Link>
+              <Link
+                href="/projects"
+                className={`nav-link ${isActive("/projects")} text-lg`}
+                onClick={toggleMenu}
+              >
+                {t("navigation.projects")}
+              </Link>
+              <Link
+                href="/about"
+                className={`nav-link ${isActive("/about")} text-lg`}
+                onClick={toggleMenu}
+              >
+                {t("navigation.about")}
+              </Link>
+              <Link
+                href="/posts"
+                className={`nav-link ${isActive("/posts")} text-lg`}
+                onClick={toggleMenu}
+              >
+                {t("navigation.posts")}
+              </Link>
+              <a
+                href="#more-on-this-site"
+                className="nav-link text-lg cursor-pointer"
+                onClick={scrollToMoreSection}
+              >
+                {t("navigation.more")}
+              </a>
+              <Link
+                href="/contact"
+                className="rounded-full px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 transition-opacity w-fit mt-2"
+                onClick={toggleMenu}
+              >
+                {t("navigation.sayHi")}
+              </Link>
+            </nav>
+          </div>
         </div>
       )}
     </header>
