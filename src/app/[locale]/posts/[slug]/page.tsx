@@ -289,10 +289,10 @@ function PostContent() {
 
       {/* Scroll to top button removed - now handled globally */}
       
-      <div className="container px-4 sm:px-6 py-8 md:py-12" >
+      <div className="container px-3 sm:px-6 py-8 md:py-12" >
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
-          <article className="lg:w-3/4 mx-auto lg:pr-8">
+          <article className="lg:w-3/4 mx-auto lg:pr-8 w-full px-0 sm:px-2">
             <header className="mb-8 text-center">
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{post?.title}</h1>
               <div className="flex justify-center flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 mb-4">
@@ -316,7 +316,7 @@ function PostContent() {
             
             <div
               ref={contentRef}
-              className="prose prose-zinc dark:prose-invert max-w-none mx-auto
+              className="prose prose-zinc dark:prose-invert max-w-none mx-auto px-0 sm:px-0
                 prose-headings:font-bold prose-headings:tracking-tight
                 prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
                 prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8
@@ -377,7 +377,7 @@ function PostContent() {
         
         {/* Previous and Next post navigation */}
         {(prevPost || nextPost) && (
-          <div className="mt-12 border-t pt-8 dark:border-zinc-800 px-0">
+          <div className="mt-12 border-t pt-8 dark:border-zinc-800 px-0 sm:px-2">
             <h3 className="text-xl font-semibold mb-6 text-center">Continue Reading</h3>
             <div className="flex flex-col sm:flex-row justify-between items-stretch gap-6 sm:gap-8">
               {/* Previous post card */}
