@@ -349,7 +349,7 @@ function PostContent() {
                       </p>
                       <Link
                         href={`/posts/${prevPost.slug}`}
-                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2"
+                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2 h-14 overflow-hidden"
                       >
                         {prevPost.title}
                       </Link>
@@ -376,7 +376,7 @@ function PostContent() {
                       </p>
                       <Link
                         href={`/posts/${nextPost.slug}`}
-                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2 text-left"
+                        className="text-base sm:text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words line-clamp-2 mb-2 text-left h-14 overflow-hidden"
                       >
                         {nextPost.title}
                       </Link>

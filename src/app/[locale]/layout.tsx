@@ -29,6 +29,14 @@ export async function generateMetadata({ params }: { params: { locale: string } 
       template: '%s | Subhodeep Dey',
     },
     description: 'Full stack developer and a leader based in UK with over 10 years of experience.',
+    icons: {
+      icon: [
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+      ],
+      apple: [
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+      ],
+    },
   };
 }
 
